@@ -1,0 +1,213 @@
+---
+title: "Travaux pratiques sous R"
+output:
+  html_document:
+    toc: true
+    theme: lumen
+    highlight: haddock
+    number_sections: true
+    smart: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=F,message=F,collapse=F)
+```
+
+#Fonctions de bases de R
+Pour chercher de l'aide sur une fonction, sur un package R ou pour chercher de la documentation :
+
+- utiliser la fonction `help` ou `?` : par exemple, pour chercher l'aide associée à la fonction `factanal`, on peut taper sur la console R `help(factanal)` ou `?factanal`
+- chercher sur internet (en utilisant l'anglais)
+- regarder les aides-mémoires/tutoriels disponibles sur internet : par exemple les *cheatsheets* de RStudio disponibles [ici](https://www.rstudio.com/resources/cheatsheets/)
+
+Pour installer un package (depuis le CRAN ou depuis le zip) utiliser la fonction `install.packages`. Par exemple :
+```{r, eval=F}
+install.packages(c("gets","forecast"))#Installe les packages gets et forecast
+install.packages("D:/Rconj_1.0.3.zip")#Installe le package Rconj présent dans le répertoire D de l'ordinateur
+```
+
+#Calculer un climat des affaires par analyse factorielle statique
+Pour calculer un climat des affaires par anlayse factorielle statique on peut utiliser la fonction `facteurStatique` :
+
+```{r, eval=F}
+facteurStatique=function(data,datedeb,datefin,retardcont = -1,normalise = FALSE){
+  # Suppression des lignes (=dates) avec des observations NA
+  tabletravail = window(data,start = datedeb,end = datefin)
+  manques = (apply(is.na(tabletravail),1,sum) > 0)
+  tabletravail = tabletravail[manques == F,]
+  
+  # Calcul des loadings  
+  Fact = factanal(tabletravail,1,scores = "regression")
+  loadings = loadings(Fact)
+  
+  # Calcul du facteur a partir des loadings
+  passage = solve(cor(tabletravail),loadings) 
+  datanorm = scale(data)
+  facteur = datanorm %*% passage
+  # Le vecteur passage correspond en fait aux coefficients
+  # Justification du calcul : voir aide de la fonction factanal
+  
+  # Mise en forme du facteur
+  if(normalise){
+    sd.facteur = sd(facteur, na.rm = T)
+    facteur = scale(facteur) * 10 + 100
+  } else {
+    facteur = facteur * 10 + 100
+  }
+  facteur = ts(facteur,start = start(data),freq = 4)
+  
+  # Calcul des contribtions de chaque question a la variation du climat des affaires
+  variationssoldes = datanorm[(1-retardcont) : dim(datanorm)[1],] - 
+    lag(datanorm,retardcont)[1:(dim(datanorm)[1] + retardcont),]
+  if(normalise) {
+    contributions = (10/sd.facteur)*variationssoldes %*% diag(passage[,1])
+  } else {
+    contributions = 10 * variationssoldes %*% diag(passage[,1])
+  }
+  contributions = ts(contributions,start = start(data) + c(0, -retardcont),freq=12)
+  colnames(contributions) = colnames(data)
+  
+  coefs = passage
+
+  # Liste des variables de sortie
+  return = list(facteur = facteur,coefs = coefs,contributions=contributions,loadings = loadings,Fact= Fact)
+}
+```
+#Recherche de modèles avec l'algorithme gets
+
+Le package utilisé sous R est [gets](https://cran.r-project.org/package=gets)
+
+Avoir un code « type » qui sera utilisé à chaque fois :
+
+```{r, eval=F}
+library(gets)#pour charger le package gets
+ordreLJ<-4#nombre de retards pour les tests de Ljung-Box
+pval<-0.017#p-value utilisée pour les tests de spécification
+nb_retards<-4#nombre de retards de la variable endogène
+ic<-"aic"#critère d'information pour sélectionner le modèle terminal
+
+#On recherche tout d'abord les points aberrants car ils peuvent influencer l'estimation et les tests de spécification
+gum <- isat(y = ipi,#Données à prévoir
+            mxreg = soldes,#variables explicatives
+            iis = TRUE,#On utilise l'algorithme IIS pour chercher des points aberrants
+            sis = FALSE,#On n'utilise pas l'algorithme SIS qui permet de chercher les ruptures en niveau
+            ar = 1:nb_retards,#on utilise les retards allant de 1 à nb_retards (1:4 donne le vecteur 1,2,3,4)
+            info.method = ic#critère d'information
+)
+mod<-getsm(arx(y = gum$aux$y, mxreg = gum$aux$mX),#On récupère les variables utilisées dans la recherche de points aberrants (y.c. indicatrices le cas échéant)
+           info.method = ic,#critère d'information
+           normality.JarqueB=pval,#p-value du test de normalité
+           ar.LjungB=list(lag=ordreLJ, pval=pval),#p-value et ordre du test d'autocorrélation
+           arch.LjungB=list(lag=ordreLJ, pval=pval)#p-value et ordre du test d'hétéroscédasticité
+)
+```
+
+Rechercher également si on peut avoir des modèles sans retard de la variable endogène :
+```{r, eval=F}
+gum <- isat(y = ipi,mxreg = soldes,iis = TRUE,sis = FALSE,
+            # ar = 1:nb_retards,
+            info.method = ic
+)
+mod<-getsm(arx(y = gum$aux$y, mxreg = gum$aux$mX),info.method = ic,
+           normality.JarqueB=pval,
+           ar.LjungB=list(lag=ordreLJ, pval=pval),arch.LjungB=list(lag=ordreLJ, pval=pval)
+)
+```
+
+Si nécessaire, rajouter les tests de spécification dans la recherche des points aberrants :
+```{r, eval=F}
+gum <- isat(y = ipi,mxreg = soldes,iis = TRUE,sis = FALSE,
+            # ar = 1:nb_retards,
+            info.method = ic,normality.JarqueB=pval,
+            ar.LjungB=list(lag=ordreLJ, pval=pval),arch.LjungB=list(lag=ordreLJ, pval=pval)
+)
+```
+
+Pour extraire les prévisions, il suffit d'utiliser la fonction `prev` (par exemple : `prev(gum)`). Les autres fonctions (extraire résidus, modèles terminaux, etc.) voir l'aide de la fonction `getsm` (avec `?getsm` ou `help(getsm)`).
+
+#Modèles de régression linéaire
+
+##Faire une régression linéaire avec R
+La fonction la plus simple pour faire une régression linéaire sous R est la fonction `lm`. La fonction `dynlm` du package [dynlm](https://cran.r-project.org/package=dynlm) a toutefois l'avantage de pouvoir utiliser des fonctions dans la spécification du modèle. Par exemple, pour faire une régression sur les données du quartet d'Anscombe :
+```{r, echo=T}
+mod<-lm(y1~x1,data=anscombe)#On régresse la variable y1 sur x1, on prend les variables de la base qui s'appelle anscombe
+mod
+#Si l'on souhaite avoir un résumé des données associées à cette régression utiliser la fonction summary
+summary(mod)
+#Pour obtenir les estimations :
+fitted(mod)
+#Pour obtenir les prévisions lorsqu'on a des nouvelles données des variables explicatives :
+nouv_donnees_x1<-data.frame(x1=c(15,6))
+predict(mod,nouv_donnees_x1)
+#Si l'on souhaite maintenant ne pas estimer la constante :
+lm(y1~-1+x1,data=anscombe)
+
+#Maintenant si l'on veut régresser une variable en utilisant des retards de la variable endogène c'est plus compliqué avec la fonction lm car il faut créer les nouvelles variables. C'est très facile à faire avec dynlm :
+library(dynlm)
+data("UKDriverDeaths", package = "datasets")
+uk <- log10(UKDriverDeaths)
+dynlm(uk ~  L(uk, 12)+diff(L(uk, 1),1))
+```
+
+Le package RConj (interne à la division des enquêtes de conjoncture de l'Insee), utilise le package [dynlm](https://cran.r-project.org/package=dynlm). L'estimation du modèle se fait en deux étapes : on définit le modèle avec la fonction `modele` et on l'estime avec la fonction `previsions`. L'avantage de ce package est qu'il permet de faire facilement des prévisions en temps réel (le code de la fonction utilisée, interne au package peut s'obtenir avec la commande `Rconj:::previsionsTempsReel`)
+
+
+```{r}
+library(Rconj)
+modele_prod_manuf <- modele( titreEtalonnage = 'Etalonnage de la production manufacturiere', 
+                             titreCourt = 'Mod1TrimCoin',
+                             formule = cprodm_ch ~  ind_manuf_tppa_m2+diff(ind_manuf_tppre_m3,1),
+                             startEst=1988,endEst=2013.25)
+prev <- previsions(modele_prod_manuf,donnees=donnees)
+#Pour afficher les prévisions en temps réel :
+prev$tempsReel$prev
+```
+
+##Corrélation et VIF
+Dans la présentation sur les généralités sur les modèles de prévision on a vu qu'il y avait plusieurs moyens de soupçonner un problème de multicolinéarité. Un exemple complet sous R est disponible [ici](http://egallic.fr/l3-eco-gestion-regression-lineaire-avec-r-probleme-de-multicolinearite/). Attention, la fonction `vif` du package [car](https://cran.r-project.org/package=car) pour calculer les facteurs d'inflation de la variance ne marche pas sur les modèles estimés avec la fonction `dynlm` (il faut donc utiliser la fonction `lm`)
+
+##Comparaison des qualités prédictives des modèles
+Pour comparer les qualités prédictives des modèles on peut utiliser la fonction `dm.test` du package [forecast](https://cran.r-project.org/package=forecast). Par exemple on va comparer les prévisions d'un modèle de production manufacturière utilisant uniquement le solde sur l'activité passée au mois 3 et celui utilisant en plus le solde sur l'activité prévue au mois 3 en différence
+```{r}
+library(Rconj)
+library(forecast)
+modele1 <- modele(titreEtalonnage = '',titreCourt = 'Mod1',
+                             formule = cprodm_ch ~  ind_manuf_tppa_m3,
+                             startEst=1990,endEst=2013.25)
+modele2 <- modele(titreEtalonnage = '',titreCourt = 'Mod2',
+                             formule = cprodm_ch ~  ind_manuf_tppa_m3+diff(ind_manuf_tppre_m3,1),
+                             startEst=1990,endEst=2013.25)
+prev1 <- previsions(modele1,donnees=donnees)
+prev2 <- previsions(modele2,donnees=donnees)
+c(prev1$rmseInSample,prev1$rmseTempsReel)
+c(prev2$rmseInSample,prev2$rmseTempsReel)
+#Le RMSE in sample et temps réel du premier modèle est plus grand : est-ce significatif sur la période 2000-2012T4 ?
+#On récupère les erreurs in sample et temps réel des deux modèles
+erreurs_IS<-ts.union(prev1$erreurInSample,prev2$erreurInSample)
+erreurs_TR<-ts.union(prev1$tempsReel$erreur,prev2$tempsReel$erreur)
+#On va les comparer sur la période 2000-2012T4
+erreurs_IS<-window(erreurs_IS,start=2000,end=2012.75)
+erreurs_TR<-window(erreurs_TR,start=2000,end=2012.75)
+
+#Prévisions in sample :
+dm.test(erreurs_IS[,1],erreurs_IS[,2],alternative = "two.sided")
+#la p-value est supérieure à 0,1 : à 10 % on ne rejette pas l'hypothèse (H_0) : les RMSE des deux modèles sont égaux dans le test où l'hypothèse alternative est (H_1) : les RMSE sont différents
+dm.test(erreurs_IS[,1],erreurs_IS[,2],alternative = "greater")
+#A 10 % on rejette l'hypothèse (H_0) : les RMSE des deux modèles sont égaux dans le test où l'hypothèse alternative est (H_1) : le deuxième modèle à un RMSE plus grand. A 10 % on considère donc que le deuxième modèle a des erreurs de prévisions in sample significativement plus petites mais ce n'est pas le cas à 5 %.
+
+#Prévisions temps réel :
+dm.test(erreurs_TR[,1],erreurs_TR[,2],alternative = "two.sided")
+#la p-value est supérieure à 0,1 : à 10 % on ne rejette pas l'hypothèse (H_0) : les RMSE des deux modèles sont égaux dans le test où l'hypothèse alternative est (H_1) : les RMSE sont différents
+dm.test(erreurs_TR[,1],erreurs_TR[,2],alternative = "greater")
+#A 10 % on rejette l'hypothèse (H_0) : les RMSE des deux modèles sont égaux dans le test où l'hypothèse alternative est (H_1) : le deuxième modèle à un RMSE plus grand. A 10 % on considère donc que le deuxième modèle a des erreurs de prévisions en temps réel significativement plus petites mais ce n'est pas le cas à 5 %.
+#Conclusion : à 5 %, le test de Diebold-Mariano conclut que les qualités prédictives (en in sample et en temps réel) des deux modèles sont équivalents. A 10 %, le deuxième modèle a un RMSE in sample et temps réel significativement plus petit : il serait donc à privilégier
+
+#Si l'on trace les erreurs dans l'échantillon graphiquement on remarque qu'elles sont proches mais un peu plus élevées pour le premier modèle lors de la crise :
+plot(erreurs_IS[,1],col = c("red"),xlab="Temps",ylab = "Erreurs de prévision in sample")
+lines(erreurs_IS[,2],col = c("blue"))
+plot(erreurs_TR[,1],col = c("red"),xlab="Temps",ylab = "Erreurs de prévision temps réel")
+lines(erreurs_TR[,2],col = c("blue"))
+```
