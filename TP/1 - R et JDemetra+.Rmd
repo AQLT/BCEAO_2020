@@ -1,0 +1,167 @@
+---
+title: "1 - R et JDemetra+"
+output:
+  unilur::tutorial_html_solution:
+    toc: true
+    number_sections: true
+    toc_float: false
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = FALSE, warning = FALSE,
+                      message = FALSE)
+i = -1
+knitr::opts_template$set(exercice = list(box.title = paste("Exercice "),
+                                         box.icon = "fa-question",
+                                         box.collapse = NULL))
+knitr::opts_template$set(solution = list(box.title = "Solution",
+                                         box.body = list(fill = "#e6f6e7", colour = "black"),
+                                         box.header = list(fill = "#ace1af", colour = "black"),
+                                         box.icon = "fa-check-square",
+                                         box.collapse = TRUE))
+knitr::opts_template$set(alert = list(box.title = "Attention !",
+                                      box.body = list(fill = "#fa5b42", colour = "#fdf6d4"),
+                                      box.collapse = NULL,
+                                      box.icon = "fa-exclamation-triangle"))
+knitr::opts_template$set(indice = list(box.title = "Indice",
+                                      box.body = list(fill = "#fff9dc", colour = "black"),
+                                      box.header = list(fill = "#ffec8b", colour = "black"),
+                                      box.icon = "fa-search",
+                                      box.collapse = TRUE))
+library(rjwsacruncher)
+library(RJDemetra)
+library(kableExtra)
+library(knitr)
+```
+
+> L'objectif de ce TP est d'apprendre à manipuler JDemetra+ sous R à travers le JWSACruncher et le package RJDemetra.
+
+Pour manipuler JDemetra+ sous R il y a actuellement deux façons : 
+
+1. Utiliser le JWSACruncher (https://github.com/jdemetra/jwsacruncher) qui permet, à partir de la console, de mettre à jour un workspace JDemetra+ et d'exporter les résultats sans devoir ouvrir le logiciel. Pour faciliter son utilisation depuis R, le package `rjwsacruncher` peut être utilisé.
+
+2. Utiliser le package `RJDemetra` qui permet d'effectuer des désaisonnalisations avec les mêmes algorithmes et paramètres que JDemetra+ et de manipuler des workspaces.
+
+
+# JWSACruncher et `rjwsacruncher`
+
+
+## Configuration du JWSACruncher {#sec:installation}
+
+Le JWSACruncher est téléchargeable ici : https://github.com/jdemetra/jwsacruncher/releases.
+
+Pour utiliser la dernière version il faut avoir une version de Java supérieure à la 8, si ce n'est pas le cas, il faut télécharger une version portable de Java et configurer le JWSACruncher en conséquence (https://github.com/AQLT/BCEAO_2020/wiki/Installation-et-configuration-de-JDemetra---et-du-JWSACruncher#installation-du-jwsacruncher). Ces manipulations peuvent aussi se faire à partir de `rjwsacruncher` :
+
+```{r, eval=FALSE}
+# install.packages("rjwsacruncher") # Si pas déjà installé
+library(rjwsacruncher)
+# Télécharge l'archive du JWSACruncher et la met sur le D:/
+download_cruncher("D:/") 
+# Dézipper l'archive et ensuite pour configurer avec une version portable de Java :
+jwsacruncher_path <- "D:/jwsacruncher-2.2.2-bin/bin/jwsacruncher.bat" # Lien vers le fichier jwsacruncher.bat
+java_path <- "D:/Java8/bin/java.exe" # Lien vers le fichier java.exe de la version portable de Java
+configure_jwsacruncher(jwsacruncher_path, java_path)
+```
+
+Pour indiquer à `rjwsacruncher` où se trouve le JWSACruncher, le plus simple est de mettre à jour l'option `cruncher_bin_directory` :
+
+```{r}
+# Chemin vers le dossier bin du JWSACruncher
+options(cruncher_bin_directory =
+            "/Users/alainquartierlatente/Desktop/BCEAO/jwsacruncher-2.2.2-bin/bin") 
+getOption("cruncher_bin_directory") # Pour afficher la valeur actuelle
+```
+
+
+## Utilisation du JWSACruncher
+
+Pour lancer le JWSACruncher il faut trois fichiers :
+
+- un fichier contenant les paramètres sur la méthode de rafraîchissement à utilisée pour mettre à jour le workspace (créé à partir de la fonction `create_param_file()`) ;  
+- un workspace valide de JDemetra+ ;  
+- l'adresse vers le JWSACruncher (option `cruncher_bin_directory`).
+
+```{block, opts.label = "exercice"}
+Utiliser la fonction `create_param_file()` pour créé un fichier de paramètres permettant de mettre à jour un workspace :
+- En reestimant le modèle ARIMA, les outliers et les autres paramètres du modèle de régression et en re-identifiant les outliers uniquement sur la dernière année.
+- En exportant la statistique M7, la statistique Q-M2 et les tests de jours ouvrables résiduels ;
+- En exportant La série brute, la série désaisonnalisée et la tendance (de manière verticale).
+```
+
+```{r, solution = TRUE}
+create_param_file(dir_file_param = "/Users/alainquartierlatente/Desktop/BCEAO/",
+                  policy = "lastoutliers",
+                  matrix_item = c("m-statistics.m7",
+                                  "m-statistics.q-m2",
+                                  "diagnostics.residual trading days tests.f-test on sa (td):2",
+                                  "diagnostics.residual trading days tests.f-test on i (td):2"),
+                  tsmatrix_series = c("y", "sa", "t"),
+                  csv_layout = "vtable" 
+)
+```
+
+Une fois ce fichier créé, pour lancer le JWSAcruncher il suffit d'utiliser la fonction `cruncher` :
+
+```{r, eval = FALSE}
+cruncher(workspace = "workspace.xml",
+         param_file_path = "/Users/alainquartierlatente/Desktop/BCEAO/parameters.param"
+)
+```
+
+Si vous n'avez pas de workspace vous pouvez utiliser le code suivant (qu'on expliquera plus tard) pour en générer un :
+```{r, eval = FALSE}
+library(RJDemetra)
+spec_x13 <- x13_spec(spec = "RSA5c", easter.enabled = FALSE)
+sa_x13 <- x13(ipi_c_eu[, "FR"], spec = spec_x13)
+spec_ts <- tramoseats_spec(spec = "RSA5")
+sa_ts <- jtramoseats(ipi_c_eu[, "FR"], spec = spec_ts)
+
+wk <- new_workspace()
+new_multiprocessing(wk, "sa1")
+add_sa_item(wk, "sa1", sa_x13, "X13")
+add_sa_item(wk, "sa1", sa_ts, "TramoSeats")
+
+save_workspace(wk, "workspace.xml")
+```
+
+Si non spécifié dans le fichier des paramètres, les résultats sont exportés dans le sous dossier "Output" du workspace (pour le `workspace.xml`, les résultats seront donc sous `workspace/Output/`). On peut aussi créer le fichier des paramètres et lancher le JWSAcruncher avec la fonction `cruncher_and_param`. Cette fonction permet aussi de renommer les dossiers exportées avec les noms des multi-processings utilisés dans JDemetra+ (évite d'avoir des dossiers du type `SAProcessing-1`) =
+
+```{r, eval = FALSE}
+cruncher_and_param(
+        workspace = "workspace.xml",
+        policy = "lastoutliers",
+        matrix_item = c("m-statistics.m7",
+                        "m-statistics.q-m2",
+                        "diagnostics.residual trading days tests.f-test on sa (td):2",
+                        "diagnostics.residual trading days tests.f-test on i (td):2"),
+        tsmatrix_series = c("y", "sa", "t"),
+        csv_layout = "vtable"
+)
+```
+
+
+# RJDemetra
+
+Pour faire de la désaisonnalisation sous R il existe plusieurs packages :
+
+- `seasonal` et `x12` qui permettent de faire du X-13ARIMA-SEATS en utilisant les programmes du US Census Bureau
+
+- `RJDemetra` qui est une interface R à JDemetra+ et c'est ce package qu'on va étudier.
+
+`RJDemetra` est sur le CRAN et se base sur les librairies Java de JDemetra+. Pour l'utiliser il faut avoir Java 8 ou plus. En cas de problème d'installation voir la page : https://github.com/jdemetra/rjdemetra/wiki/Installation-manual.
+
+Le package a aussi un site web (https://jdemetra.github.io/rjdemetra/).
+
+`RJDemetra` permet :
+
+- de faire des modèles RegARIMA, TRAMO-SEATS and X-13-ARIMA comme dans JDemetra+ en définissant sa propre spécification
+
+- Manipuler les workspaces de JDemetra+ :  
+    + Importer les modèles workspaces sauvegardés par JDemetra+
+    + Exporter les modèles créés sous RJDemetra
+ 
+
+
+
+
