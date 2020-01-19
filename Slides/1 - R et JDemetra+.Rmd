@@ -2,7 +2,7 @@
 title: "1 - R et JDemetra+"
 subtitle: "BCEAO - 20 au 25 janvier 2019"
 author: "Dominique Ladiray et Alain Quartier-la-Tente"
-division: ""
+division: "(dominique.ladiray@insee.fr et alain.quartier@yahoo.fr)"
 departement: ""
 logo: "img/logoinsee"
 logo2: "img/BCEAO"
@@ -172,7 +172,7 @@ $\rightarrow$ Il faut Java 8 ou plus pour l'utiliser. En cas de problème d'inst
     
 \medskip
 
-- Contient une base de données (`ìpi_c_eu`) : les IPI dans l'industrie manufacturière dans l'UE
+- Contient une base de données (`ipi_c_eu`) : les IPI dans l'industrie manufacturière dans l'UE
 
 ## RegARIMA : exemples
 
@@ -381,3 +381,15 @@ autoplot(readRDS("img/microbenchmark.RDS")) + theme(text = element_text(size=20)
 \faGithub{} https://github.com/AQLT/rjdmarkdown
 
 - Réalisations d'études : Ladiray D., Quartier-la-Tente A., "Du bon usage des modèles Reg-ARIMA en désaisonnalisation", JMS 2018
+
+### Travaux pratiques \bcoutil
+
+Maintenant à vous de jouer !
+
+Documents sous : https://github.com/AQLT/BCEAO_2020
+
+Objectifs du TP : 
+
+- Prendre en main `rjwsacruncher` et mettre à jour son workspace
+
+- Prendre en main `RJDemetra` : faire une désaisonnalisation sous R, changer la spécification, exporter et importer un workspace.

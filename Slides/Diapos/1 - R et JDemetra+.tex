@@ -13,6 +13,7 @@
 \usepackage{amssymb,amsmath,mathtools,multirow}
 \usepackage{float,hhline}
 \usepackage{tikz,pgfplots}
+\usepackage[tikz]{bclogo}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
@@ -140,7 +141,9 @@
 \setcandidatelabel{}
 
 \rel{}
-\division{}
+\division{(\href{mailto:dominique.ladiray@insee.fr}{\nolinkurl{dominique.ladiray@insee.fr}}
+et
+\href{mailto:alain.quartier@yahoo.fr}{\nolinkurl{alain.quartier@yahoo.fr}})}
 
 \departement{}
 
@@ -377,7 +380,7 @@ problème d'installation :
 \begin{itemize}
 \tightlist
 \item
-  Contient une base de données (\texttt{ìpi\_c\_eu}) : les IPI dans
+  Contient une base de données (\texttt{ipi\_c\_eu}) : les IPI dans
   l'industrie manufacturière dans l'UE
 \end{itemize}
 
@@ -1002,6 +1005,25 @@ paramètre (série désaisonnalisée, tendance, etc.)
 \item
   Réalisations d'études : Ladiray D., Quartier-la-Tente A., ``Du bon
   usage des modèles Reg-ARIMA en désaisonnalisation'', JMS 2018
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Travaux pratiques \bcoutil}
+\protect\hypertarget{travaux-pratiques}{}
+
+Maintenant à vous de jouer !
+
+Documents sous : \url{https://github.com/AQLT/BCEAO_2020}
+
+Objectifs du TP :
+
+\begin{itemize}
+\item
+  Prendre en main \texttt{rjwsacruncher} et mettre à jour son workspace
+\item
+  Prendre en main \texttt{RJDemetra} : faire une désaisonnalisation sous
+  R, changer la spécification, exporter et importer un workspace.
 \end{itemize}
 
 \end{frame}
