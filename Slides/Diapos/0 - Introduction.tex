@@ -1,0 +1,214 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[10pt,xcolor=table,color={dvipsnames,usenames},ignorenonframetext,usepdftitle=false,french]{beamer}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+\usepackage{caption}
+\captionsetup{skip=0pt,belowskip=0pt}
+%\setlength\abovecaptionskip{-15pt}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath,mathtools,multirow}
+\usepackage{float,hhline}
+\usepackage{tikz,pgfplots}
+\usepackage[tikz]{bclogo}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+\usetheme[coding=utf8,language=french,
+,titlepagelogo=img/logoinsee
+,secondlogo=true
+]{TorinoTh}
+\titlepagesecondlogo{img/BCEAO}
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={0 - Introduction},
+            pdfauthor={Dominique Ladiray et Alain Quartier-la-Tente},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\newif\ifbibliography
+% Prevent slide breaks in the middle of a paragraph:
+\widowpenalties 1 10000
+\raggedbottom
+\AtBeginPart{
+  \let\insertpartnumber\relax
+  \let\partname\relax
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \begin{frame}{Sommaire}
+    \tableofcontents[currentsection, hideothersubsections]
+    \end{frame}
+  \fi
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  %\setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  }
+\setcounter{secnumdepth}{0}
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{animate}
+\usepackage{fontawesome5}
+
+\title{0 - Introduction}
+\ateneo{BCEAO - 20 au 25 janvier 2019}
+\author{Dominique Ladiray et Alain Quartier-la-Tente}
+\date{}
+
+
+\setrellabel{}
+
+\setcandidatelabel{}
+
+\rel{}
+\division{(\href{mailto:dominique.ladiray@insee.fr}{\nolinkurl{dominique.ladiray@insee.fr}}
+et
+\href{mailto:alain.quartier@yahoo.fr}{\nolinkurl{alain.quartier@yahoo.fr}})}
+
+\departement{}
+
+\DeclareMathOperator{\Cov}{Cov}
+\newcommand{\E}[1]{\mathbb{E}\left[ #1 \right]}
+\newcommand{\V}[1]{\mathbb{V}\left[ #1 \right]}
+\newcommand{\cov}[2]{\Cov\left( #1\,,\,#2 \right)}
+
+\begin{document}
+\frame[plain,noframenumbering]{\titlepage}
+
+\begin{frame}{Introduction et programme}
+\protect\hypertarget{introduction-et-programme}{}
+
+Objectif : adapter au mieux la formation à vos besoins !
+
+\(\rightarrow\) N'hésitez pas à échanger avec nous, entre vous, à
+exprimer des besoins, demander des clarifications\ldots{}
+
+\pause
+
+Programme indicatif et révisable :
+
+\begin{itemize}
+\item
+  Lundi 20 janvier :
+
+  \begin{itemize}
+  \item
+    Installation des logiciels/packages
+  \item
+    TP introductif à la manipulation des séries temporelles
+  \item
+    Introduction à la désaisonnalisation sous R
+  \end{itemize}
+
+  \pause
+\item
+  Mardi 21 janvier :
+
+  \begin{itemize}
+  \item
+    Plug-in \emph{nowcasting} de la banque nationale de belgique
+  \item
+    Modèles SARIMA et ECM sous R
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Introduction et programme}
+\protect\hypertarget{introduction-et-programme-1}{}
+
+\begin{itemize}
+\item
+  Mercredi 22 janvier :
+
+  \begin{itemize}
+  \item
+    Construction d'indicateurs de retournement conjoncturels
+  \item
+    Partie libre à définir
+  \end{itemize}
+\item
+  Jeudi 23 et vendredi 24 janvier (Dominique Ladiray) :
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Désaisonnalisation
+  \end{itemize}
+\end{itemize}
+
+\medskip
+
+Ensemble des documents disponibles sous :
+\url{https://github.com/AQLT/BCEAO_2020}
+
+\end{frame}
+
+\begin{frame}{Deux travaux pratiques}
+\protect\hypertarget{deux-travaux-pratiques}{}
+
+\begin{itemize}
+\item
+  TP0 : traitement des objets séries temporelles sous R
+
+  \begin{itemize}
+  \item
+    Créer des séries temporelles, les raccourcir, manipuler les périodes
+  \item
+    Faire des manipulations plus ``poussées'' : trimestrialisation,
+    imputation des données manquantes, formatage des dates
+  \end{itemize}
+\item
+  TP1 : Désaisonnalisation sous R avec JDemetra+
+
+  \begin{itemize}
+  \item
+    Rafraichir son workspace et exporter les résultats
+  \item
+    Désaisonnaliser sous R, créer et importer les workspaces de
+    JDemetra+
+  \end{itemize}
+
+  \pause
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Récupérer des stickers
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\end{document}

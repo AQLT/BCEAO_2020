@@ -1,0 +1,98 @@
+---
+title: "0 - Introduction"
+subtitle: "BCEAO - 20 au 25 janvier 2019"
+author: "Dominique Ladiray et Alain Quartier-la-Tente"
+division: "(dominique.ladiray@insee.fr et alain.quartier@yahoo.fr)"
+departement: ""
+logo: "img/logoinsee"
+logo2: "img/BCEAO"
+output: 
+    beamer_presentation:
+        template: template.tex
+        keep_tex: yes
+        theme: TorinoTh
+        slide_level: 3
+        fig_caption: true
+themeoptions: "coding=utf8,language=french"
+classoption: 'usepdftitle=false,french'
+fontsize: 10pt
+lan: french
+knit: (function(inputFile, encoding) {
+      repertoire_sortie <- "Diapos";
+      rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file=file.path(repertoire_sortie, paste0(sub(".Rmd","",basename(inputFile)),".pdf"))) })
+header-includes:
+- \usepackage{animate} 
+- \usepackage{fontawesome5}
+---
+
+```{r setup, include=FALSE}
+options(xtable.comment = FALSE)
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'H',message=FALSE,warning = FALSE)
+```
+
+### Introduction et programme
+
+Objectif : adapter au mieux la formation à vos besoins !
+
+$\rightarrow$ N'hésitez pas à échanger avec nous, entre vous, à exprimer des besoins, demander des clarifications...
+
+\pause
+
+Programme indicatif et révisable :
+
+- Lundi 20 janvier :  
+
+  + Installation des logiciels/packages
+  
+  + TP introductif à la manipulation des séries temporelles
+  
+  + Introduction à la désaisonnalisation sous R
+  
+  \pause
+  
+- Mardi 21 janvier :
+
+  + Plug-in *nowcasting* de la banque nationale de belgique
+  
+  + Modèles SARIMA et ECM sous R
+  
+  
+### Introduction et programme
+
+- Mercredi 22 janvier :
+
+  + Construction d'indicateurs de retournement conjoncturels
+  
+  + Partie libre à définir
+  
+- Jeudi 23 et vendredi 24 janvier (Dominique Ladiray) :
+
+  + Désaisonnalisation
+  
+  
+\medskip
+Ensemble des documents disponibles sous : https://github.com/AQLT/BCEAO_2020
+
+  
+### Deux travaux pratiques 
+
+- TP0 : traitement des objets séries temporelles sous R
+
+  + Créer des séries temporelles, les raccourcir, manipuler les périodes
+  
+  + Faire des manipulations plus "poussées" : trimestrialisation, imputation des données manquantes, formatage des dates
+  
+  
+- TP1 : Désaisonnalisation sous R avec JDemetra+
+
+  + Rafraichir son workspace et exporter les résultats
+  
+  + Désaisonnaliser sous R, créer et importer les workspaces de JDemetra+
+  
+  \pause
+  + Récupérer des stickers
+  
+
+
