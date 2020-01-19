@@ -1,34 +1,40 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# BCEAO\_2020
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  fig.align = "center"
+)
+```
+# BCEAO_2020
 
-Ce projet rassemble l’ensemble des documents utilisés pendant pendant la
-formation à la BCEAO sur le traitement et la prévision des séries
-temporelles sous R.
+Ce projet rassemble l'ensemble des documents utilisés pendant pendant la formation à la BCEAO sur le traitement et la prévision des séries temporelles sous R. 
 
-Les présentations du lundi 20 janvier
-    :
+Les présentations du lundi 20 janvier :
 
-  - [Introduction](https://aqlt.github.io/BCEAO_2020/TP/0%20-%20Introduction.pdf)
+- [Introduction](https://aqlt.github.io/BCEAO_2020/TP/0%20-%20Introduction.pdf)
 
-  - [La désaisonnalisation sous R : le JWSACRuncher et
-    RJDemetra](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/1%20-%20R%20et%20JDemetra%2B.pdf)
+- [La désaisonnalisation sous R : le JWSACRuncher et RJDemetra](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/1%20-%20R%20et%20JDemetra%2B.pdf)
+
 
 Les travaux pratiques du lundi 20 janvier :
 
-  - [TP 0 - Introduction aux séries temporelles sous
-    R](https://aqlt.github.io/BCEAO_2020/TP/0---Traitement-des-séries-temporelles_solution.html)
+- [TP 0 - Introduction aux séries temporelles sous R](https://aqlt.github.io/BCEAO_2020/TP/0---Traitement-des-séries-temporelles_solution.html)
 
-  - [TP 1 - R et
-    JDemetra](https://aqlt.github.io/BCEAO_2020/TP/1---R-et-JDemetra%2B_solution.html)
+- [TP 1 - R et JDemetra](https://aqlt.github.io/BCEAO_2020/TP/1---R-et-JDemetra%2B_solution.html)
+
 
 # Installation
 
-Ci-dessous l’ensemble des packages à utiliser pendant la
-formation
+Ci-dessous l'ensemble des packages à utiliser pendant la formation
 
-``` r
+```{r, eval = FALSE}
 install.packages(c("devtools", "ggplot2", "depmixS4", "Rcpp", "RcppArmadillo", "DEoptim",
                    "xts", "XLConnect", "zoo", "tsibble", "ggplot2", "tsDyn", "fable",
                    "ecm", "rJava", "RJDemetra", "ggdemetra", "rjwsacruncher"))
@@ -36,26 +42,24 @@ install.packages(c("devtools", "ggplot2", "depmixS4", "Rcpp", "RcppArmadillo", "
 
 Regarder si le code suivant marche :
 
-``` r
+```{r, eval = FALSE}
 library(RJDemetra)
 ```
 
-Sinon il faudra faire une installation à partir du version portable de
-Java : <https://github.com/jdemetra/rjdemetra/wiki/Installation-manual>
+Sinon il faudra faire une installation à partir du version portable de Java : https://github.com/jdemetra/rjdemetra/wiki/Installation-manual
 
 Pour télécharger le JWSACruncher :
 
-``` r
+```{r, eval = FALSE}
 library(rjwsacruncher)
 rjwsacruncher::download_cruncher()
 ```
 
-Pour télécharger JDemetra+ :
-<https://github.com/jdemetra/jdemetra-app/releases>
+Pour télécharger JDemetra+ : https://github.com/jdemetra/jdemetra-app/releases
 
 Code utilisé pour importer vos données sous R :
 
-``` r
+```{r, eval = FALSE}
 library(XLConnect)
 lectureDonnees <- function(startRow, endRow){
   data <- readWorksheet(wb, sheet = "IHPC_Mensuel",startRow = startRow, endRow  = endRow,
