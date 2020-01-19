@@ -21,7 +21,7 @@ Les travaux pratiques du lundi 20 janvier :
     R](https://aqlt.github.io/BCEAO_2020/TP/0---Traitement-des-séries-temporelles_solution.html)
 
   - [TP 1 - R et
-    JDemetra](https://aqlt.github.io/BCEAO_2020/TP/1---R-et-JDemetra%2B_solution.html)
+    JDemetra+](https://aqlt.github.io/BCEAO_2020/TP/1---R-et-JDemetra%2B_solution.html)
 
 # Installation
 
