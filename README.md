@@ -10,7 +10,7 @@ temporelles sous R.
 Les présentations du lundi 20 janvier
     :
 
-  - [Introduction](https://aqlt.github.io/BCEAO_2020/TP/0%20-%20Introduction.pdf)
+  - [Introduction](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/0%20-%20Introduction.pdf)
 
   - [La désaisonnalisation sous R : le JWSACRuncher et
     RJDemetra](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/1%20-%20R%20et%20JDemetra%2B.pdf)
