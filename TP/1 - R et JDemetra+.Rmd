@@ -29,6 +29,7 @@ knitr::opts_template$set(indice = list(box.title = "Indice",
                                       box.header = list(fill = "#ffec8b", colour = "black"),
                                       box.icon = "fa-search",
                                       box.collapse = TRUE))
+options(enable_print_style = FALSE)
 library(rjwsacruncher)
 library(RJDemetra)
 library(kableExtra)
@@ -161,7 +162,129 @@ Le package a aussi un site web (https://jdemetra.github.io/rjdemetra/).
     + Importer les modèles workspaces sauvegardés par JDemetra+
     + Exporter les modèles créés sous RJDemetra
  
+ 
+## Créer une specification
+
+Dans les prochains exercices, la série utilisée sera `ipi_c_eu[, "FR"]` qui est l'IPI français. Vous pouvez bien sûr adapter le code pour utiliser vos propres séries. Les fonctions utilisées seront `x13()`, `x13_spec()`, `regarima_x13`, `regarima_x13_spec` ou `regarima`.
+
+```{block, opts.label = "exercice"}
+Faire la désaisonnalisation d'une série avec X-13 avec la spécification suivante :
+- détection automatique du schéma de décomposition, des outliers et du modèle ARIMA
+- une correction des jours ouvrables "working days" et un effet graduel de Pâques
+Faire ensuite un graphique avec la série brute et la série désaisonnalisée
+```
+
+```{block, opts.label = "indice"}
+Utiliser la spécification `RSA4c` pour la désaisonnalisation.
+
+Si le modèle créé s'appelle `mysa`, regarder les valeurs de `mysa$final`, `mysa$final$series` et `mysa$final$forecasts`.
+```
+
+```{r, solution = TRUE}
+mysa <- x13(ipi_c_eu[, "FR"], spec = "RSA4c")
+mysa
+y <- mysa$final$series[,"y"]
+# De façon équivalente :
+y <- get_ts(mysa)
+sa <- mysa$final$series[,"sa"]
+plot(y)
+lines(sa, col = "red")
+# ou on peut directement utiliser les fonctions de RJDemetra :
+plot(mysa, first_date = 2000, #Pour n'afficher le graphique qu'à partir de 200
+     type_chart = "sa-trend" # Pour faire le graphique avec y, sa et tendance
+     )
+```
+
+```{block, opts.label = "exercice"}
+Modifier le modèle précédent pour enlever l'effet graduel de Pâques.
+```
+
+```{r, solution = TRUE}
+spec_sans_easter <- x13_spec(mysa,
+                 easter.enabled = FALSE)
+mysa2 <- x13(ipi_c_eu[, "FR"], spec_sans_easter)
+mysa2$regarima
+```
+
+```{block, opts.label = "exercice"}
+Calculer les values associées au modèle Reg-ARIMA de la précédente spécification
+```
+
+```{block, opts.label = "indice"}
+Récupérer le modèle Reg-ARIMA et utiliser la fonction `summary()`.
+```
+
+```{r, solution = TRUE}
+summary(mysa2$regarima)
+```
+
+## Créer un workspace
+
+Dans cette partie nous allons créer un workspace depuis R. Pour cela les fonctions qui peuvent être utilisées sont `new_workspace()`, `load_workspace()`, `new_multiprocessing()`, `add_sa_item()`, `save_workspace()`, `compute()`, `get_object()`, `get_name()`, `get_ts()` ou `count`.
+
+```{block, opts.label = "exercice"}
+Créer un workspace qui va contenir une série désaisonnalisée selon 3 spécifications différentes.
+```
+
+```{r, solution = TRUE}
+wk <- new_workspace()
+new_multiprocessing(wk, "MP-1")
+add_sa_item(wk, "MP-1", mysa, "X13 avec Pâques")
+add_sa_item(wk, "MP-1", mysa2, "X13 sans Pâques")
+add_sa_item(wk, "MP-1", tramoseats(ipi_c_eu[, "FR"]), "TRAMO-SEATS")
+save_workspace(wk, "mon_premier_workspace.xml")
+```
 
 
+```{block, opts.label = "exercice"}
+Importer le workspace précédent et récupérer :  
+- Le nom du premier multi-processing
+- Le nombre de modèle dans ce premier multi-processing
+- L'ensemble des séries brutes
+- Le 2ème modèle
+```
+
+```{r, solution = TRUE}
+wk <- load_workspace("mon_premier_workspace.xml")
+compute(wk)
+count(wk) # Nombre de multiprocessing
+mp1 <- get_object(wk, 1) # Le premier multiprocessing
+get_name(mp1)
+count(mp1)
+all_y <- get_ts(mp1) # toutes les séries brutes
+model2 <- get_object(mp1, 2) # On récupère l'objet associé au 2ème modèle
+get_model(model2, wk)
+```
+
+## Manipuler les objets Java
+
+L'objectif de cette partie est de manipuler la fonction `jx13()` pour gagner en temps de calcul.
+
+```{block, opts.label = "exercice"}
+Créer un modèle à partir de la fonction `jx13()` et la spécification sans effet graduel de pâques calculée dans une des sections précédentes.
+```
+
+```{r, solution = TRUE}
+myjsa <- jx13(ipi_c_eu[, "FR"], spec_sans_easter)
+get_indicators(myjsa, "sa")
+```
 
 
+```{block, opts.label = "exercice"}
+Toujours avec la même spécification, extraire les révisions de la séries désaisonnalisée du point de janvier 2005 (i.e. : série désaisonnalisée lorsqu'on a les données jusqu'en janvier 2005, puis jusqu'en février 2005, etc.)
+```
+
+```{block, opts.label = "indice"}
+Récupérer l'ensemble des dates de fin d'estimation avec la fonction `window(time(ipi_c_eu[, "FR"]), start = 2005)`.
+```
+
+```{r, solution = TRUE}
+dates <- window(time(ipi_c_eu[, "FR"]), start = 2005)
+estimations <- sapply(dates, function(last_date_estimation){
+  myjsa <- jx13(window(ipi_c_eu[, "FR"], end = last_date_estimation), spec_sans_easter)
+  sa <- get_indicators(myjsa, "sa")$sa
+  window(sa, start = 2005, end = 2005) # Pour ne récupérer que la valeur en 2005
+})
+estimations <- ts(estimations, start = 2005, frequency = 12)
+plot(estimations)
+```

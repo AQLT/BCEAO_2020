@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.1.2)  17 JAN 2020 22:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.1.2)  19 JAN 2020 11:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -3186,7 +3186,7 @@ Package rerunfilecheck Info: File `"1 - R et JDemetra+".out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  54392 strings out of 492616
- 1186702 string characters out of 6129482
+ 1186711 string characters out of 6129482
  1357748 words of memory out of 5000000
  57130 multiletter control sequences out of 15000+600000
  616093 words of font info for 115 fonts, out of 8000000 for 9000
@@ -3211,7 +3211,7 @@ t/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2019/texmf-dist/fonts/ty
 pe1/public/lm/lmtt10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public
 /lm/lmtt8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtti10
 .pfb>
-Output written on "1 - R et JDemetra+.pdf" (31 pages, 2354760 bytes).
+Output written on "1 - R et JDemetra+.pdf" (31 pages, 2354741 bytes).
 PDF statistics:
  2021 PDF objects out of 2073 (max. 8388607)
  1140 compressed objects within 12 object streams
