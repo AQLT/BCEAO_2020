@@ -91,6 +91,22 @@ Extraire toutes les données du 2ème trimestre de l'objet `ts_object`
 ts_object[cycle(ts_object) == 2]
 ```
 
+```{block, opts.label = "exercice"}
+Créer une série temporelle mensuelle qui commence en 2000, qui se termine en janvier 2020, qui vaut 1 en avril 2009 et 0 à toutes les autres dates 
+```
+
+```{r, solution = TRUE}
+indicatrice <- ts(0, start = 2000, end = 2020, frequency = 12)
+window(indicatrice, start = c(2005, 4), end = c(2005, 4)) <- 1
+indicatrice
+```
+
+Pour tracer un graphique il suffit maintenant d'utiliser les fonctions `plot()` et `lines()`
+```{r}
+plot(ts_object * 2)
+lines(ts_object, col = "red")
+```
+
 ## Séries multivariées
 
 De la même façon que précédemment on peut créer une série temporelle multivariée. Cette fois-ci l'objet créé est à la fois `mts`, `ts` et `matrix`
@@ -100,13 +116,14 @@ mts <- ts(matrix(rnorm(300), 100, 3), start = c(1961, 1), frequency = 12)
 
 On peut accéder à la première variable de la même façon que dans une matrice : par son nom ou son numéro de colonne :
 ```{r}
+colnames(mts)
 # mts[,1] # ou de façon équivalente :
 mts[, "Series 1"]
 ```
 Et avec les même fonctions que pour les matrices on peut récupérer les noms des colonnes (`colnames`), le nombre de variables (`ncol`), etc.
 
 ```{block, opts.label = "alert"}
-Une source classique d'erreur est de manipuler des séries-temporelles uni et multivariées et de vouloir utiliser les fonctions liées aux matrices sur les séries univariées. Par exemple, `colnames(ts_object)` renverra toujours l'objet `NULL`. Une solution est de tester si l'objet est multivarié avec la fonction `ìs.mts()`.
+Une source classique d'erreur est de manipuler des séries-temporelles uni et multivariées et de vouloir utiliser les fonctions liées aux matrices sur les séries univariées. Par exemple, `colnames(ts_object)` renverra toujours l'objet `NULL`. Une solution est de tester si l'objet est multivarié avec la fonction `is.mts()`.
 ```
 
 ##  Manipulation basiques
