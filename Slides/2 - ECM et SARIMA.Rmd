@@ -1,0 +1,64 @@
+---
+title: "2 - ECM et SARIMA"
+subtitle: "BCEAO - 20 au 25 janvier 2019"
+author: "Dominique Ladiray et Alain Quartier-la-Tente"
+division: "(dominique.ladiray@insee.fr et alain.quartier@yahoo.fr)"
+departement: ""
+logo: "img/logoinsee"
+logo2: "img/BCEAO"
+output: 
+    beamer_presentation:
+        template: template.tex
+        keep_tex: yes
+        theme: TorinoTh
+        slide_level: 3
+        fig_caption: true
+themeoptions: "coding=utf8,language=french"
+classoption: 'usepdftitle=false,french'
+fontsize: 10pt
+lan: french
+knit: (function(inputFile, encoding) {
+      repertoire_sortie <- "Diapos";
+      rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file=file.path(repertoire_sortie, paste0(sub(".Rmd","",basename(inputFile)),".pdf"))) })
+header-includes:
+- \usepackage{animate} 
+- \usepackage{fontawesome5}
+---
+
+```{r setup, include=FALSE}
+options(xtable.comment = FALSE)
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'H',message=FALSE,warning = FALSE)
+```
+
+### Modèles à corrections d'erreurs
+
+De nombreux packages sont disponibles pour faire des estimations avec des modèles ECM $\rightarrow$ on va utiliser `ecm`.
+
+Modèle général :
+
+$$
+\Delta y = \beta_{0} + \beta_{1}\Delta x_{1,t} +...+ \beta_{i}\Delta x_{i,t} + \gamma(y_{t-1} - (\alpha_{1}x_{1,t-1} +...+\alpha_{i}x_{i,t-1})
+$$
+
+Modèle estimé :
+
+$$
+\Delta y = \beta_{0} + \underbrace{\beta_{1}\Delta x_{1,t} +...+ \beta_{i}\Delta x_{i,t}}_{\text{court terme ("transient term")}} + \gamma y_{t-1} + \underbrace{\gamma x_{1,t-1} +...+ \gamma x_{i,t-1}}_{\text{long terme ("equilibrium term")}}
+$$
+
+### Modèles à corrections d'erreurs
+
+Estimation à partir de la fonction `ecm()` qui a 4 paramètres :
+
+- `y` la variable d'intérêt (un `data.frame`)
+
+- `xeq` les variables de long terme (un `data.frame`)
+
+- `xtr` les variables de court terme (un `data.frame`)
+
+- `includeIntercept` booléen indiquant si l'on ajoute ou non une constante
+ 
+
+
