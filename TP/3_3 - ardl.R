@@ -14,3 +14,13 @@ mod <- dynlm(ensemble ~  transport +
 mod
 summary(mod)
 predict(mod) # Prévisions
+
+
+library(dynamac)
+model <- dynardl(ensemble ~ transport + alimentaires,
+        lags = list("ensemble"= 1,"transport" = 1),
+        diffs = c("alimentaires"), 
+        ec = TRUE, simulate = FALSE,
+        data = data.frame(ipch_benin))
+model
+summary(model)
