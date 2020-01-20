@@ -38,6 +38,7 @@ beamer_textheight <- 7.89807
 conv_cm_to_in <- 0.393701
 conv_cm_to_px <- 75
 knitr::opts_chunk$set(echo = TRUE, fig.pos = 'H',message=FALSE,warning = FALSE)
+load("bceao.RData")
 ```
 
 # Le JWSACruncher

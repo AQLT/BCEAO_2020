@@ -50,6 +50,46 @@
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
 \newif\ifbibliography
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 % Prevent slide breaks in the middle of a paragraph:
 \widowpenalties 1 10000
 \raggedbottom
@@ -106,6 +146,9 @@ et
 \begin{document}
 \frame[plain,noframenumbering]{\titlepage}
 
+\hypertarget{moduxe8les-ecm}{%
+\section{Modèles ECM}\label{moduxe8les-ecm}}
+
 \begin{frame}[fragile]{Modèles à corrections d'erreurs}
 \protect\hypertarget{moduxe8les-uxe0-corrections-derreurs}{}
 
@@ -123,6 +166,614 @@ Modèle estimé :
 \[
 \Delta y = \beta_{0} + \underbrace{\beta_{1}\Delta x_{1,t} +...+ \beta_{i}\Delta x_{i,t}}_{\text{court terme ("transient term")}} + \gamma y_{t-1} + \underbrace{\gamma x_{1,t-1} +...+ \gamma x_{i,t-1}}_{\text{long terme ("equilibrium term")}}
 \]
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles à corrections d'erreurs}
+\protect\hypertarget{moduxe8les-uxe0-corrections-derreurs-1}{}
+
+Estimation à partir de la fonction \texttt{ecm()} qui a 4 paramètres :
+
+\begin{itemize}
+\item
+  \texttt{y} la variable d'intérêt (un \texttt{data.frame})
+\item
+  \texttt{xeq} les variables de long terme (un \texttt{data.frame})
+\item
+  \texttt{xtr} les variables de court terme (un \texttt{data.frame})
+\item
+  \texttt{includeIntercept} booléen indiquant si l'on ajoute ou non une
+  constante
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ecm)}
+\NormalTok{donnees_ts <-}\StringTok{ }\KeywordTok{ts.intersect}\NormalTok{(raffinage, brent)}
+\NormalTok{data <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(donnees_ts) }\CommentTok{# il faut des data.frame}
+\NormalTok{model <-}\StringTok{ }\KeywordTok{ecm}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ data[}\StringTok{"raffinage"}\NormalTok{], }
+             \DataTypeTok{xeq =}\NormalTok{ data[}\StringTok{"brent"}\NormalTok{],}
+             \DataTypeTok{xtr =}\NormalTok{ data[}\StringTok{"brent"}\NormalTok{],}
+             \DataTypeTok{includeIntercept=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles à correction d'erreur}
+\protect\hypertarget{moduxe8les-uxe0-correction-derreur}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = dy ~ ., data = x, weights = weights)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.7703 -0.7356  0.0397  0.7718  4.3810 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  4.02129    0.93933   4.281 2.59e-05 ***
+## deltabrent   0.44470    0.01228  36.208  < 2e-16 ***
+## brentLag1    0.05975    0.01344   4.447 1.28e-05 ***
+## yLag1       -0.10334    0.02357  -4.385 1.67e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.342 on 268 degrees of freedom
+## Multiple R-squared:  0.8355, Adjusted R-squared:  0.8336 
+## F-statistic: 453.7 on 3 and 268 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles à correction d'erreur}
+\protect\hypertarget{moduxe8les-uxe0-correction-derreur-1}{}
+
+Pour obtenir de manière dynamique les prévisions, pas de solution
+disponible dans le package\ldots{} voir programme
+\texttt{TP/3\_1\ -\ Modèle\ ecm.R} pour une solution (on fait une boucle
+pour mettre à jour de manière dynamique en récupérant à chaque fois la
+prévision en m+1)
+
+Autres packages R ne font que des VECM : \texttt{tsDyn} avec la fonction
+\texttt{VECM()} par exemple\ldots{} Mais permettent d'avoir les
+prévisions de manière dynamique
+
+\end{frame}
+
+\hypertarget{moduxe8les-sarima}{%
+\section{Modèles SARIMA}\label{moduxe8les-sarima}}
+
+\hypertarget{avec-forecast}{%
+\subsection{\texorpdfstring{Avec
+\texttt{forecast}}{Avec forecast}}\label{avec-forecast}}
+
+\begin{frame}[fragile]{Modèles SARIMA}
+\protect\hypertarget{moduxe8les-sarima-1}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(forecast)}
+\NormalTok{arima_auto <-}\StringTok{ }\KeywordTok{auto.arima}\NormalTok{(ipch_benin[,}\StringTok{"ensemble"}\NormalTok{])}
+\NormalTok{arima_auto}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Series: ipch_benin[, "ensemble"] 
+## ARIMA(2,1,1)(0,0,2)[12] with drift 
+## 
+## Coefficients:
+##          ar1      ar2      ma1    sma1    sma2   drift
+##       0.6855  -0.1198  -0.7307  0.0809  0.0899  0.1592
+## s.e.  0.1653   0.0709   0.1581  0.0630  0.0608  0.0430
+## 
+## sigma^2 estimated as 0.9209:  log likelihood=-347.09
+## AIC=708.19   AICc=708.64   BIC=732.95
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles ARIMA}
+\protect\hypertarget{moduxe8les-arima}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# On peut aussi redéfinir le modèle à main :}
+\NormalTok{arima_fixe <-}\StringTok{ }\KeywordTok{Arima}\NormalTok{(ipch_benin[,}\StringTok{"ensemble"}\NormalTok{],}
+                    \DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{), }\DataTypeTok{seasonal =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{2}\NormalTok{),}
+                    \DataTypeTok{include.drift =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(arima_fixe)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Series: ipch_benin[, "ensemble"] 
+## ARIMA(2,1,1)(0,0,2)[12] with drift 
+## 
+## Coefficients:
+##          ar1      ar2      ma1    sma1    sma2   drift
+##       0.6855  -0.1198  -0.7307  0.0809  0.0899  0.1592
+## s.e.  0.1653   0.0709   0.1581  0.0630  0.0608  0.0430
+## 
+## sigma^2 estimated as 0.9209:  log likelihood=-347.09
+## AIC=708.19   AICc=708.64   BIC=732.95
+## 
+## Training set error measures:
+##                         ME      RMSE       MAE         MPE      MAPE      MASE
+## Training set -0.0003855297 0.9463808 0.7132021 4.88716e-05 0.8513712 0.2946415
+##                      ACF1
+## Training set -0.005317493
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles ARIMA}
+\protect\hypertarget{moduxe8les-arima-1}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{accuracy}\NormalTok{(arima_auto)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                         ME      RMSE       MAE         MPE      MAPE      MASE
+## Training set -0.0003855297 0.9463808 0.7132021 4.88716e-05 0.8513712 0.2946415
+##                      ACF1
+## Training set -0.005317493
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{forecast}\NormalTok{(arima_auto, }\DataTypeTok{h =} \DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          Point Forecast     Lo 80    Hi 80    Lo 95    Hi 95
+## Apr 2018       101.5592 100.32942 102.7891 99.67838 103.4401
+## May 2018       101.7273 100.02679 103.4277 99.12661 104.3279
+## Jun 2018       101.8454  99.87819 103.8126 98.83682 104.8539
+## Jul 2018       101.9287  99.77828 104.0792 98.63990 105.2175
+## Aug 2018       101.9232  99.62586 104.2205 98.40972 105.4367
+## Sep 2018       101.9448  99.51823 104.3714 98.23367 105.6560
+## Oct 2018       102.0983  99.55248 104.6442 98.20479 105.9919
+## Nov 2018       102.3853  99.72680 105.0438 98.31948 106.4511
+## Dec 2018       102.5334  99.76731 105.2994 98.30304 106.7637
+## Jan 2019       102.9181 100.04863 105.7875 98.52964 107.3065
+\end{verbatim}
+
+\end{frame}
+
+\hypertarget{avec-rjdemetra}{%
+\subsection{\texorpdfstring{Avec
+\texttt{RJDemetra}}{Avec RJDemetra}}\label{avec-rjdemetra}}
+
+\begin{frame}[fragile]{Modèles SARIMA}
+\protect\hypertarget{moduxe8les-sarima-2}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(RJDemetra)}
+\NormalTok{arima_auto_jd <-}\StringTok{ }\KeywordTok{regarima_x13}\NormalTok{(ipch_benin[,}\StringTok{"ensemble"}\NormalTok{])}
+\KeywordTok{summary}\NormalTok{(arima_auto_jd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## y = regression model + arima (0, 1, 0, 0, 1, 1)
+## 
+## Model: RegARIMA - X13
+## Estimation span: from 1-1997 to 3-2018
+## Log-transformation: no
+## Regression model: no mean, no trading days effect, no leap year effect, no Easter effect, outliers(3)
+## 
+## Coefficients:
+## ARIMA: 
+##           Estimate Std. Error T-stat Pr(>|t|)    
+## BTheta(1)  -0.9145     0.0355 -25.76   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Regression model: 
+##             Estimate Std. Error T-stat Pr(>|t|)    
+## LS (1-2012)   4.3790     0.8241  5.314 2.43e-07 ***
+## AO (4-2015)  -2.7470     0.5869 -4.681 4.76e-06 ***
+## AO (6-2009)  -2.3224     0.5818 -3.992 8.71e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## 
+## Residual standard error: 0.8265 on 237 degrees of freedom
+## Log likelihood =  -308, aic =   626, aicc = 626.3, bic(corrected for length) = -0.2903
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Pour obtenir les prévisions : }
+\NormalTok{arima_auto_jd}\OperatorTok{$}\NormalTok{forecast}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              fcst   fcsterr
+## Apr 2018 102.0625 0.8362706
+## May 2018 102.6104 1.1809875
+## Jun 2018 102.5594 1.4466714
+## Jul 2018 102.2266 1.6701685
+## Aug 2018 101.4578 1.8673051
+## Sep 2018 101.2930 2.0455303
+## Oct 2018 101.6243 2.2094252
+## Nov 2018 102.1102 2.3619749
+## Dec 2018 102.3557 2.5052527
+## Jan 2019 102.7234 2.6411578
+## Feb 2019 102.2990 2.7699502
+## Mar 2019 102.6144 2.8930147
+## Apr 2019 103.4769 3.0328435
+## May 2019 104.0249 3.1658775
+## Jun 2019 103.9738 3.2939588
+## Jul 2019 103.6410 3.4170202
+## Aug 2019 102.8722 3.5359087
+## Sep 2019 102.7074 3.6509277
+## Oct 2019 103.0387 3.7624323
+## Nov 2019 103.5246 3.8707260
+## Dec 2019 103.7701 3.9760713
+## Jan 2020 104.1378 4.0794532
+## Feb 2020 103.7134 4.1793772
+## Mar 2020 104.0288 4.2769673
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles SARIMA}
+\protect\hypertarget{moduxe8les-sarima-3}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Pour obtenir les prévisions : }
+\NormalTok{arima_auto_jd}\OperatorTok{$}\NormalTok{forecast}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              fcst   fcsterr
+## Apr 2018 102.0625 0.8362706
+## May 2018 102.6104 1.1809875
+## Jun 2018 102.5594 1.4466714
+## Jul 2018 102.2266 1.6701685
+## Aug 2018 101.4578 1.8673051
+## Sep 2018 101.2930 2.0455303
+## Oct 2018 101.6243 2.2094252
+## Nov 2018 102.1102 2.3619749
+## Dec 2018 102.3557 2.5052527
+## Jan 2019 102.7234 2.6411578
+## Feb 2019 102.2990 2.7699502
+## Mar 2019 102.6144 2.8930147
+## Apr 2019 103.4769 3.0328435
+## May 2019 104.0249 3.1658775
+## Jun 2019 103.9738 3.2939588
+## Jul 2019 103.6410 3.4170202
+## Aug 2019 102.8722 3.5359087
+## Sep 2019 102.7074 3.6509277
+## Oct 2019 103.0387 3.7624323
+## Nov 2019 103.5246 3.8707260
+## Dec 2019 103.7701 3.9760713
+## Jan 2020 104.1378 4.0794532
+## Feb 2020 103.7134 4.1793772
+## Mar 2020 104.0288 4.2769673
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles SARIMA}
+\protect\hypertarget{moduxe8les-sarima-4}{}
+
+\footnotesize
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Pour avoir une plus grande période, il faut refaire une specification}
+\NormalTok{arima_auto_jd_spec <-}\StringTok{ }\KeywordTok{regarima_spec_x13}\NormalTok{(arima_auto_jd,}
+                      \CommentTok{# -3 pour trois années, équivalent ) 12*3}
+                                        \DataTypeTok{fcst.horizon =} \DecValTok{-3}\NormalTok{)}
+
+\NormalTok{arima_auto_jd <-}\StringTok{ }\KeywordTok{regarima}\NormalTok{(ipch_benin[,}\StringTok{"ensemble"}\NormalTok{],}
+\NormalTok{                          arima_auto_jd_spec)}
+\NormalTok{arima_auto_jd}\OperatorTok{$}\NormalTok{forecast}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              fcst   fcsterr
+## Apr 2018 102.0625 0.8362706
+## May 2018 102.6104 1.1809875
+## Jun 2018 102.5594 1.4466714
+## Jul 2018 102.2266 1.6701685
+## Aug 2018 101.4578 1.8673051
+## Sep 2018 101.2930 2.0455303
+## Oct 2018 101.6243 2.2094252
+## Nov 2018 102.1102 2.3619749
+## Dec 2018 102.3557 2.5052527
+## Jan 2019 102.7234 2.6411578
+## Feb 2019 102.2990 2.7699502
+## Mar 2019 102.6144 2.8930147
+## Apr 2019 103.4769 3.0328435
+## May 2019 104.0249 3.1658775
+## Jun 2019 103.9738 3.2939588
+## Jul 2019 103.6410 3.4170202
+## Aug 2019 102.8722 3.5359087
+## Sep 2019 102.7074 3.6509277
+## Oct 2019 103.0387 3.7624323
+## Nov 2019 103.5246 3.8707260
+## Dec 2019 103.7701 3.9760713
+## Jan 2020 104.1378 4.0794532
+## Feb 2020 103.7134 4.1793772
+## Mar 2020 104.0288 4.2769673
+## Apr 2020 104.8913 4.3886739
+## May 2020 105.4393 4.4971659
+## Jun 2020 105.3882 4.6033997
+## Jul 2020 105.0555 4.7070749
+## Aug 2020 104.2866 4.8085944
+## Sep 2020 104.1218 4.9080145
+## Oct 2020 104.4532 5.0054603
+## Nov 2020 104.9391 5.1010449
+## Dec 2020 105.1845 5.1948710
+## Jan 2021 105.5522 5.2880051
+## Feb 2021 105.1278 5.3783589
+## Mar 2021 105.4433 5.4672196
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles SARIMA}
+\protect\hypertarget{moduxe8les-sarima-5}{}
+
+\footnotesize
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{arima_fixe_jd_spec <-}\StringTok{ }
+\StringTok{  }\KeywordTok{regarima_spec_x13}\NormalTok{(arima_auto_jd,}
+                    \DataTypeTok{automdl.enabled =} \OtherTok{FALSE}\NormalTok{,}
+                    \DataTypeTok{arima.mu =} \OtherTok{FALSE}\NormalTok{,}
+                    \DataTypeTok{arima.p =} \DecValTok{0}\NormalTok{, }\DataTypeTok{arima.d =} \DecValTok{1}\NormalTok{, }\DataTypeTok{arima.q =} \DecValTok{0}\NormalTok{,}
+                    \DataTypeTok{arima.bp =} \DecValTok{0}\NormalTok{, }\DataTypeTok{arima.bd =} \DecValTok{1}\NormalTok{, }\DataTypeTok{arima.bq =} \DecValTok{1}\NormalTok{)}
+\NormalTok{arima_auto_jd <-}\StringTok{ }\KeywordTok{regarima}\NormalTok{(ipch_benin[,}\StringTok{"ensemble"}\NormalTok{], }
+\NormalTok{                          arima_fixe_jd_spec)}
+\NormalTok{arima_auto_jd}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## y = regression model + arima (0, 1, 0, 0, 1, 1)
+## Log-transformation: no
+## Coefficients:
+##           Estimate Std. Error
+## BTheta(1)  -0.9145      0.036
+## 
+##             Estimate Std. Error
+## LS (1-2012)    4.379      0.824
+## AO (4-2015)   -2.747      0.587
+## AO (6-2009)   -2.322      0.582
+## 
+## 
+## Residual standard error: 0.8265 on 237 degrees of freedom
+## Log likelihood =  -308, aic =   626 aicc = 626.3, bic(corrected for length) = -0.2903
+\end{verbatim}
+
+\end{frame}
+
+\hypertarget{moduxe8les-ardl}{%
+\section{Modèles ARDL}\label{moduxe8les-ardl}}
+
+\hypertarget{avec-dynlm}{%
+\subsection{\texorpdfstring{Avec
+\texttt{dynlm}}{Avec dynlm}}\label{avec-dynlm}}
+
+\begin{frame}[fragile]{Modèles ARDL}
+\protect\hypertarget{moduxe8les-ardl-1}{}
+
+\texttt{dynlm} permet de faire facilement des modèles linéaires avec des
+transformations
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dynlm)}
+\CommentTok{# Modèle sans aucun sens économique}
+\NormalTok{mod <-}\StringTok{ }\KeywordTok{dynlm}\NormalTok{(ensemble }\OperatorTok{~}\StringTok{  }\NormalTok{transport }\OperatorTok{+}
+\StringTok{               }\KeywordTok{L}\NormalTok{(transport, }\DecValTok{12}\NormalTok{) }\OperatorTok{+}\StringTok{ }\CommentTok{# lag d'ordre 12}
+\StringTok{               }\KeywordTok{diff}\NormalTok{(transport,}\DecValTok{1}\NormalTok{), }\CommentTok{# On différencie}
+             \DataTypeTok{data =}\NormalTok{ ipch_benin)}
+\CommentTok{# Équivalent à :}
+\NormalTok{mod <-}\StringTok{ }\KeywordTok{dynlm}\NormalTok{(ensemble }\OperatorTok{~}\StringTok{  }\NormalTok{transport }\OperatorTok{+}
+\StringTok{               }\KeywordTok{lag}\NormalTok{(transport, }\DecValTok{-12}\NormalTok{) }\OperatorTok{+}\StringTok{ }\CommentTok{# lag d'ordre 12}
+\StringTok{               }\KeywordTok{diff}\NormalTok{(transport,}\DecValTok{1}\NormalTok{), }\CommentTok{# On différencie}
+             \DataTypeTok{data =}\NormalTok{ ipch_benin)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles ARDL}
+\protect\hypertarget{moduxe8les-ardl-2}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(mod)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Time series regression with "ts" data:
+## Start = 1998(1), End = 2018(3)
+## 
+## Call:
+## dynlm(formula = ensemble ~ transport + lag(transport, -12) + 
+##     diff(transport, 1), data = ipch_benin)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.3295 -1.7062  0.0818  1.4791  5.8110 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)         40.05389    0.58882  68.024   <2e-16 ***
+## transport            0.38936    0.02230  17.463   <2e-16 ***
+## lag(transport, -12)  0.21227    0.02147   9.885   <2e-16 ***
+## diff(transport, 1)  -0.09347    0.04831  -1.935   0.0542 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.447 on 239 degrees of freedom
+## Multiple R-squared:  0.9645, Adjusted R-squared:  0.9641 
+## F-statistic:  2167 on 3 and 239 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles ARDL}
+\protect\hypertarget{moduxe8les-ardl-3}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{predict}\NormalTok{(mod)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  jan 1998  fév 1998  mar 1998  avr 1998  mai 1998  jui 1998  jul 1998  aoû 1998 
+##  63.40777  63.73444  65.62796  64.37006  64.17943  63.98067  64.05581  64.02017 
+##  sep 1998  oct 1998  nov 1998  déc 1998  jan 1999  fév 1999  mar 1999  avr 1999 
+##  63.88444  63.93878  63.98123  64.96601  64.62967  64.56988  65.80206  64.54029 
+##  mai 1999  jui 1999  jul 1999  aoû 1999  sep 1999  oct 1999  nov 1999  déc 1999 
+##  64.54029  64.32416  64.24145  64.14488  64.10496  64.22332  64.26071  65.01202 
+##  jan 2000  fév 2000  mar 2000  avr 2000  mai 2000  jui 2000  jul 2000  aoû 2000 
+##  64.26620  65.28563  66.39045  66.61324  66.60389  68.49304  68.84753  68.51228 
+##  sep 2000  oct 2000  nov 2000  déc 2000  jan 2001  fév 2001  mar 2001  avr 2001 
+##  68.94051  69.12514  69.72781  70.30039  70.15012  71.01452  72.23551  72.51959 
+##  mai 2001  jui 2001  jul 2001  aoû 2001  sep 2001  oct 2001  nov 2001  déc 2001 
+##  72.34986  73.71502  73.41947  73.07522  73.45787  73.22699  73.51857  73.56772 
+##  jan 2002  fév 2002  mar 2002  avr 2002  mai 2002  jui 2002  jul 2002  aoû 2002 
+##  73.26592  73.35590  73.48456  73.47600  73.32740  73.99958  74.07786  73.01653 
+##  sep 2002  oct 2002  nov 2002  déc 2002  jan 2003  fév 2003  mar 2003  avr 2003 
+##  73.60858  73.64230  73.55058  73.57115  73.44422  74.15588  75.71589  76.05401 
+##  mai 2003  jui 2003  jul 2003  aoû 2003  sep 2003  oct 2003  nov 2003  déc 2003 
+##  75.53386  75.85131  75.64419  74.70072  75.43776  75.25263  75.19655  75.42104 
+##  jan 2004  fév 2004  mar 2004  avr 2004  mai 2004  jui 2004  jul 2004  aoû 2004 
+##  75.24680  75.64199  76.77695  76.65991  76.48846  76.95878  76.94105  77.02081 
+##  sep 2004  oct 2004  nov 2004  déc 2004  jan 2005  fév 2005  mar 2005  avr 2005 
+##  77.33196  77.24198  77.41951  77.70845  76.79098  76.45623  77.06086  77.51312 
+##  mai 2005  jui 2005  jul 2005  aoû 2005  sep 2005  oct 2005  nov 2005  déc 2005 
+##  77.88190  78.22582  78.66965  79.19516  80.21291  80.69110  80.52883  80.07898 
+##  jan 2006  fév 2006  mar 2006  avr 2006  mai 2006  jui 2006  jul 2006  aoû 2006 
+##  79.41194  80.53475  81.28392  81.58496  81.57120  81.84994  82.27117  82.38181 
+##  sep 2006  oct 2006  nov 2006  déc 2006  jan 2007  fév 2007  mar 2007  avr 2007 
+##  84.28060  84.72212  84.34124  84.49779  85.07544  85.26290  84.97938  84.93560 
+##  mai 2007  jui 2007  jul 2007  aoû 2007  sep 2007  oct 2007  nov 2007  déc 2007 
+##  85.00854  87.91126  88.23082  88.02946  88.75635  87.27453  86.81980  87.16043 
+##  jan 2008  fév 2008  mar 2008  avr 2008  mai 2008  jui 2008  jul 2008  aoû 2008 
+##  88.29346  88.06442  88.19950  88.33984  88.03217  89.71169  90.14036  91.84257 
+##  sep 2008  oct 2008  nov 2008  déc 2008  jan 2009  fév 2009  mar 2009  avr 2009 
+##  91.56023  90.47723  90.16209  89.70322  88.69862  87.38409  86.68754  87.00073 
+##  mai 2009  jui 2009  jul 2009  aoû 2009  sep 2009  oct 2009  nov 2009  déc 2009 
+##  87.08685  87.02051  87.93156  88.88610  88.86953  89.29825  89.20707  89.62296 
+##  jan 2010  fév 2010  mar 2010  avr 2010  mai 2010  jui 2010  jul 2010  aoû 2010 
+##  88.53790  87.76910  87.26921  87.28977  87.65561  87.73326  87.98743  87.58343 
+##  sep 2010  oct 2010  nov 2010  déc 2010  jan 2011  fév 2011  mar 2011  avr 2011 
+##  87.58200  87.66769  87.73137  88.44344  88.48897  88.72798  88.71983  88.70884 
+##  mai 2011  jui 2011  jul 2011  aoû 2011  sep 2011  oct 2011  nov 2011  déc 2011 
+##  88.82475  89.14792  88.92329  88.99482  88.81783  89.29279  89.27417  89.52748 
+##  jan 2012  fév 2012  mar 2012  avr 2012  mai 2012  jui 2012  jul 2012  aoû 2012 
+##  99.71820  99.80402  98.53713  98.51965  98.36875  98.74822  98.35631  98.53527 
+##  sep 2012  oct 2012  nov 2012  déc 2012  jan 2013  fév 2013  mar 2013  avr 2013 
+##  99.19106  99.83544 101.17660 100.71352 107.98931 105.63525 104.94725 105.48461 
+##  mai 2013  jui 2013  jul 2013  aoû 2013  sep 2013  oct 2013  nov 2013  déc 2013 
+## 105.24136 104.74674 104.45597 104.70301 105.69213 104.17891 103.88737 102.29190 
+##  jan 2014  fév 2014  mar 2014  avr 2014  mai 2014  jui 2014  jul 2014  aoû 2014 
+## 102.29116 102.47508 103.24229 103.33182 102.64268 102.21484 101.36029 101.46517 
+##  sep 2014  oct 2014  nov 2014  déc 2014  jan 2015  fév 2015  mar 2015  avr 2015 
+## 102.13302 101.04612 100.39356  99.47592  98.34642  97.94247  98.58359  98.50411 
+##  mai 2015  jui 2015  jul 2015  aoû 2015  sep 2015  oct 2015  nov 2015  déc 2015 
+## 103.72649 101.51480 100.44146  99.81872  99.23042  99.51633  99.90898  99.27916 
+##  jan 2016  fév 2016  mar 2016  avr 2016  mai 2016  jui 2016  jul 2016  aoû 2016 
+##  97.78848  96.44398  97.52364 100.30625 102.31819  98.05188  98.61771  98.16600 
+##  sep 2016  oct 2016  nov 2016  déc 2016  jan 2017  fév 2017  mar 2017  avr 2017 
+##  96.70825  96.72031  96.80432  96.42147  98.23178  99.16089  99.71953 103.16615 
+##  mai 2017  jui 2017  jul 2017  aoû 2017  sep 2017  oct 2017  nov 2017  déc 2017 
+## 102.22081  98.80719  98.07130  98.21054  97.36145  97.42513  97.29776  97.27654 
+##  jan 2018  fév 2018  mar 2018 
+##  98.93227  99.54787  99.03841
+\end{verbatim}
+
+\end{frame}
+
+\hypertarget{avec-dynamac}{%
+\subsection{\texorpdfstring{Avec
+\texttt{dynamac}}{Avec dynamac}}\label{avec-dynamac}}
+
+\begin{frame}[fragile]{Modèles ARDL}
+\protect\hypertarget{moduxe8les-ardl-4}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dynamac)}
+\NormalTok{model <-}\StringTok{ }\KeywordTok{dynardl}\NormalTok{(ensemble }\OperatorTok{~}\StringTok{ }\NormalTok{transport }\OperatorTok{+}\StringTok{ }\NormalTok{alimentaires,}
+        \DataTypeTok{lags =} \KeywordTok{list}\NormalTok{(}\StringTok{"ensemble"}\NormalTok{=}\StringTok{ }\DecValTok{1}\NormalTok{,}\StringTok{"transport"}\NormalTok{ =}\StringTok{ }\DecValTok{1}\NormalTok{),}
+        \DataTypeTok{diffs =} \KeywordTok{c}\NormalTok{(}\StringTok{"alimentaires"}\NormalTok{), }
+        \DataTypeTok{ec =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{simulate =} \OtherTok{FALSE}\NormalTok{,}
+        \DataTypeTok{data =} \KeywordTok{data.frame}\NormalTok{(ipch_benin))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Error correction (EC) specified; dependent variable to be run in differences."
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Modèles ARDL}
+\protect\hypertarget{moduxe8les-ardl-5}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = as.formula(paste(paste(dvnamelist), "~", paste(colnames(IVs), 
+##     collapse = "+"), collapse = " ")))
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.8583 -0.2671 -0.0674  0.1511  5.2282 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      -1.127981   0.512643  -2.200  0.02870 *  
+## l.1.ensemble      0.037092   0.012519   2.963  0.00334 ** 
+## d.1.alimentaires  0.363401   0.016656  21.818  < 2e-16 ***
+## l.1.transport    -0.025457   0.007662  -3.323  0.00103 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.577 on 250 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.6575, Adjusted R-squared:  0.6534 
+## F-statistic:   160 on 3 and 250 DF,  p-value: < 2.2e-16
+\end{verbatim}
 
 \end{frame}
 

@@ -26,15 +26,12 @@ arima_auto_jd <- regarima(ipch_benin[,"ensemble"], arima_auto_jd_spec)
 arima_auto_jd$forecast
 
 # Pour spécifier son propre modèle arima
-arima_fixe_jd_spec <- regarima_spec_x13(arima_auto_jd,
-                                        automdl.enabled = FALSE,
-                                        arima.mu = FALSE,
-                                        arima.p = 0,
-                                        arima.d = 1,
-                                        arima.q = 0,
-                                        arima.bp = 0,
-                                        arima.bd = 1,
-                                        arima.bq = 1)
+arima_fixe_jd_spec <- 
+  regarima_spec_x13(arima_auto_jd,
+                    automdl.enabled = FALSE,
+                    arima.mu = FALSE,
+                    arima.p = 0, arima.d = 1, arima.q = 0,
+                    arima.bp = 0, arima.bd = 1, arima.bq = 1)
 arima_auto_jd <- regarima(ipch_benin[,"ensemble"], arima_fixe_jd_spec)
 arima_auto_jd
 arima_auto_jd$forecast
