@@ -16,7 +16,7 @@ Les présentations du lundi 20 janvier
     RJDemetra](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/1%20-%20R%20et%20JDemetra%2B.pdf)
 
   - [Modèles ECM, SARIMA et
-    ARDL](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/1%20-%20R%20et%20JDemetra%2B.pdf)
+    ARDL](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/2%20-%20ECM%20et%20SARIMA.pdf)
 
 Les travaux pratiques du lundi 20 janvier :
 
