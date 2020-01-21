@@ -15,6 +15,9 @@ Les présentations du lundi 20 janvier
   - [La désaisonnalisation sous R : le JWSACRuncher et
     RJDemetra](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/1%20-%20R%20et%20JDemetra%2B.pdf)
 
+  - [Modèles ECM, SARIMA et
+    ARDL](https://aqlt.github.io/BCEAO_2020/Slides/Diapos/1%20-%20R%20et%20JDemetra%2B.pdf)
+
 Les travaux pratiques du lundi 20 janvier :
 
   - [TP 0 - Introduction aux séries temporelles sous
@@ -41,7 +44,16 @@ library(RJDemetra)
 ```
 
 Sinon il faudra faire une installation à partir du version portable de
-Java : <https://github.com/jdemetra/rjdemetra/wiki/Installation-manual>
+Java : <https://github.com/jdemetra/rjdemetra/wiki/Installation-manual>.
+
+En TP on a vu que cela marchait en téléchargeant Java 11
+<https://jdk.java.net/java-se-ri/11>. Ensuite fermer RStudio, ouvrir et
+le code suivant devrait marcher
+
+``` r
+Sys.getenv("C:/Users/Administrateur/Desktop/jdk-11")
+library(RJDemetra)
+```
 
 Pour télécharger le JWSACruncher :
 
