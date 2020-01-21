@@ -105,13 +105,13 @@ De nombreux packages sont disponibles pour faire des estimations avec des modèl
 Modèle général :
 
 $$
-\Delta y = \beta_{0} + \beta_{1}\Delta x_{1,t} +...+ \beta_{i}\Delta x_{i,t} + \gamma(y_{t-1} - (\alpha_{1}x_{1,t-1} +...+\alpha_{i}x_{i,t-1})
+\Delta y = \beta_{0} + \beta_{1}\Delta x_{1,t} +...+ \beta_{i}\Delta x_{i,t} + \gamma(y_{t-1} - (\alpha_{1}x_{1,t-1} +...+\alpha_{i}x_{i,t-1}))
 $$
 
 Modèle estimé :
 
 $$
-\Delta y = \beta_{0} + \underbrace{\beta_{1}\Delta x_{1,t} +...+ \beta_{i}\Delta x_{i,t}}_{\text{court terme ("transient term")}} + \gamma y_{t-1} + \underbrace{\gamma x_{1,t-1} +...+ \gamma x_{i,t-1}}_{\text{long terme ("equilibrium term")}}
+\Delta y = \beta_{0} + \underbrace{\beta_{1}\Delta x_{1,t} +...+ \beta_{i}\Delta x_{i,t}}_{\text{court terme ("transient term")}} + \gamma y_{t-1} + \underbrace{\gamma_1 x_{1,t-1} +...+ \gamma_i x_{i,t-1}}_{\text{long terme ("equilibrium term")}}
 $$
 
 ### Modèles à corrections d'erreurs
